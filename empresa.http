@@ -1,0 +1,118 @@
+### 1. Crear empresa (caso feliz) -> 201
+POST http://localhost:3000/api/v1/empresas
+Content-Type: application/json
+
+{
+  "nombre": "Sales de Jujuy version"
+}
+
+### 2. Listar empresas (paginado, solo activas por default) -> 200
+GET http://localhost:3000/api/v1/empresas
+
+### 2b. Listar con paginación explícita -> 200
+GET http://localhost:3000/api/v1/empresas?page=1&limit=10
+
+### 2c. Listar filtrando por nombre -> 200
+GET http://localhost:3000/api/v1/empresas?nombre=jujuy
+
+### 2d. Listar incluyendo solo las dadas de baja -> 200
+GET http://localhost:3000/api/v1/empresas?activo=false
+
+### 3. Obtener empresa por ID existente (reemplazá el 1 por un id real devuelto en el test 1) -> 200
+GET http://localhost:3000/api/v1/empresas/1
+
+### 4. Obtener empresa con ID en formato inválido (no numérico) -> 400 (idParamSchema)
+GET http://localhost:3000/api/v1/empresas/abc
+
+### 5. Obtener empresa con ID inexistente -> 404 (NotFoundError)
+GET http://localhost:3000/api/v1/empresas/9999
+
+### 6. Reemplazar empresa existente (reemplazá el 1 por un id real) -> 200
+PUT http://localhost:3000/api/v1/empresas/2
+Content-Type: application/json
+
+{
+  "nombre": "Mom Mining nuevo",
+  "activo": true
+}
+
+### 7. Actualizar parcialmente una empresa existente -> 200
+PATCH http://localhost:3000/api/v1/empresas/2
+Content-Type: application/json
+
+{
+  "nombre": "Mom Mining Actualizada"
+}
+
+### 8. Reemplazar empresa inexistente -> 404
+PUT http://localhost:3000/api/v1/empresas/9999
+Content-Type: application/json
+
+{
+  "nombre": "No debería aplicar",
+  "activo": true
+}
+
+### 9. Reemplazar con ID en formato inválido -> 400
+PUT http://localhost:3000/api/v1/empresas/abc
+Content-Type: application/json
+
+{
+  "nombre": "No debería aplicar",
+  "activo": true
+}
+
+### 10. Actualizar parcialmente con body vacío -> 400
+PATCH http://localhost:3000/api/v1/empresas/1
+Content-Type: application/json
+
+{}
+
+### 11. Crear empresa con body inválido (nombre vacío) -> 400 (createEmpresaSchema)
+POST http://localhost:3000/api/v1/empresas
+Content-Type: application/json
+
+{
+  "nombre": ""
+}
+
+### 12. Crear empresa con nombre duplicado -> 409 (ConflictError vía P2002)
+### usa el nombre que quedó tras el test 6 ("Mom Mining"), o el original si no corriste el 6
+POST http://localhost:3000/api/v1/empresas
+Content-Type: application/json
+
+{
+  "nombre": "Mom Mining"
+}
+
+### 13. Ruta que no existe en absoluto -> 404 (catch-all)
+GET http://localhost:3000/api/v1/rutaqueNoexiste
+
+### 14. Dar de baja una empresa existente (baja lógica, reemplazá el 1 por un id real) -> 200, activo:false
+DELETE http://localhost:3000/api/v1/empresas/1
+
+### 14b. La empresa dada de baja ya no aparece en el listado default -> 200 (no debería incluir el id 1)
+GET http://localhost:3000/api/v1/empresas
+
+### 14c. Pero sigue siendo accesible por ID -> 200, activo:false
+GET http://localhost:3000/api/v1/empresas/1
+
+### 14d. Reactivarla -> 200, activo:true
+PATCH http://localhost:3000/api/v1/empresas/1
+Content-Type: application/json
+
+{
+  "activo": true
+}
+
+### 15. Dar de baja una empresa inexistente -> 404
+DELETE http://localhost:3000/api/v1/empresas/9999
+
+### 16. Dar de baja con ID en formato inválido -> 400
+DELETE http://localhost:3000/api/v1/empresas/abc
+
+### 17. Dar de baja dos veces la misma empresa -> segunda vez 409 (ya estaba inactiva)
+DELETE http://localhost:3000/api/v1/empresas/2
+
+### 17b.
+DELETE http://localhost:3000/api/v1/empresas/2

@@ -1,0 +1,8 @@
+dist
+node_modules
+src/generated
+
+# Skills/agent tooling de terceros, no son código del proyecto
+.agents
+.claude
+.windsurf

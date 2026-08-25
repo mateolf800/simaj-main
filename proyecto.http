@@ -1,0 +1,130 @@
+### 0. Antes que nada, necesitás una empresa y un departamento reales.
+### Creá una empresa:
+POST http://localhost:3000/api/v1/empresas
+Content-Type: application/json
+
+{
+  "nombre": "Minera del Norte S.A."
+}
+
+### Y un departamento:
+POST http://localhost:3000/api/v1/departamentos
+Content-Type: application/json
+
+{
+  "nombre": "Rinconada"
+}
+
+### Y al menos un mineral:
+POST http://localhost:3000/api/v1/minerales
+Content-Type: application/json
+
+{
+  "nombre": "Litio"
+}
+
+### Anotá los "id" que te devolvieron los de arriba y usalos abajo (reemplazá empresaId/departamentoId/mineralIds).
+
+### 1. Crear proyecto con sus minerales (caso feliz) -> 201, incluye proyectoMinerales
+POST http://localhost:3000/api/v1/proyectos
+Content-Type: application/json
+
+{
+  "nombre": "Pedimento Norte I",
+  "empresaId": 1,
+  "departamentoId": 1,
+  "superficieTotalPedimento": 1500.5,
+  "areaUtilizada": 320.75,
+  "poligonoPedimento": "POLYGON((-65.5 -22.1, -65.4 -22.1, -65.4 -22.0, -65.5 -22.0, -65.5 -22.1))",
+  "mineralIds": [1]
+}
+
+### 2. Crear proyecto con empresaId inexistente -> 400 (foreign key inválida, P2003)
+POST http://localhost:3000/api/v1/proyectos
+Content-Type: application/json
+
+{
+  "nombre": "Proyecto fantasma",
+  "empresaId": 9999,
+  "departamentoId": 1,
+  "superficieTotalPedimento": 100,
+  "areaUtilizada": 50,
+  "poligonoPedimento": "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))",
+  "mineralIds": [1]
+}
+
+### 2b. Crear proyecto sin mineralIds -> 400 (falta al menos un mineral)
+POST http://localhost:3000/api/v1/proyectos
+Content-Type: application/json
+
+{
+  "nombre": "Proyecto sin minerales",
+  "empresaId": 1,
+  "departamentoId": 1,
+  "superficieTotalPedimento": 100,
+  "areaUtilizada": 50,
+  "poligonoPedimento": "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))",
+  "mineralIds": []
+}
+
+### 2c. Crear proyecto con mineralIds repetidos -> 400
+POST http://localhost:3000/api/v1/proyectos
+Content-Type: application/json
+
+{
+  "nombre": "Proyecto mineral repetido",
+  "empresaId": 1,
+  "departamentoId": 1,
+  "superficieTotalPedimento": 100,
+  "areaUtilizada": 50,
+  "poligonoPedimento": "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))",
+  "mineralIds": [1, 1]
+}
+
+### 2d. Crear proyecto con un mineralId inexistente -> 400 (foreign key inválida, P2003)
+POST http://localhost:3000/api/v1/proyectos
+Content-Type: application/json
+
+{
+  "nombre": "Proyecto mineral fantasma",
+  "empresaId": 1,
+  "departamentoId": 1,
+  "superficieTotalPedimento": 100,
+  "areaUtilizada": 50,
+  "poligonoPedimento": "POLYGON((0 0, 1 0, 1 1, 0 1, 0 0))",
+  "mineralIds": [9999]
+}
+
+### 3. Listar proyectos (paginado, solo activos por default) -> 200
+GET http://localhost:3000/api/v1/proyectos
+
+### 4. Listar proyectos de una empresa puntual -> 200
+GET http://localhost:3000/api/v1/proyectos?empresaId=1
+
+### 5. Obtener proyecto por ID (reemplazá el 1 por un id real) -> 200
+GET http://localhost:3000/api/v1/proyectos/1
+
+### 6. Obtener proyecto inexistente -> 404
+GET http://localhost:3000/api/v1/proyectos/9999
+
+### 7. Actualizar parcialmente -> 200
+PATCH http://localhost:3000/api/v1/proyectos/1
+Content-Type: application/json
+
+{
+  "areaUtilizada": 400
+}
+
+### 8. Dar de baja (baja lógica, reemplazá el 1 por un id real) -> 200, activo:false
+DELETE http://localhost:3000/api/v1/proyectos/1
+
+### 8b. Ya no aparece en el listado default -> 200
+GET http://localhost:3000/api/v1/proyectos
+
+### 8c. Reactivar -> 200, activo:true
+PATCH http://localhost:3000/api/v1/proyectos/1
+Content-Type: application/json
+
+{
+  "activo": true
+}

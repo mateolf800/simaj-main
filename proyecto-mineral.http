@@ -1,0 +1,52 @@
+### 0. Necesitás un proyecto y un mineral reales.
+### Creá una empresa, un departamento y un proyecto (ver proyecto.http), y un mineral:
+POST http://localhost:3000/api/v1/minerales
+Content-Type: application/json
+
+{
+  "nombre": "Litio"
+}
+
+### Anotá los "id" de arriba y usalos abajo (reemplazá proyectoId/mineralId).
+
+### 1. Asociar un mineral a un proyecto (caso feliz) -> 201
+POST http://localhost:3000/api/v1/proyecto-minerales
+Content-Type: application/json
+
+{
+  "proyectoId": 1,
+  "mineralId": 1
+}
+
+### 2. Asociar la misma pareja de nuevo -> 409 (viola la PK compuesta)
+POST http://localhost:3000/api/v1/proyecto-minerales
+Content-Type: application/json
+
+{
+  "proyectoId": 1,
+  "mineralId": 1
+}
+
+### 3. Asociar con proyectoId inexistente -> 400 (foreign key inválida, P2003)
+POST http://localhost:3000/api/v1/proyecto-minerales
+Content-Type: application/json
+
+{
+  "proyectoId": 9999,
+  "mineralId": 1
+}
+
+### 4. Listar asociaciones (paginado) -> 200
+GET http://localhost:3000/api/v1/proyecto-minerales
+
+### 5. Listar los minerales de un proyecto puntual -> 200
+GET http://localhost:3000/api/v1/proyecto-minerales?proyectoId=1
+
+### 6. Listar los proyectos donde se usa un mineral puntual -> 200
+GET http://localhost:3000/api/v1/proyecto-minerales?mineralId=1
+
+### 7. Quitar la asociación (reemplazá los ids por unos reales) -> 200
+DELETE http://localhost:3000/api/v1/proyecto-minerales/1/1
+
+### 8. Quitar una asociación que ya no existe -> 404
+DELETE http://localhost:3000/api/v1/proyecto-minerales/1/1

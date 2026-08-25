@@ -1,0 +1,101 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Get a free hosted Postgres database in seconds: `npx create-db`
+
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Empresa {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @unique @db.VarChar(150)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  proyectos Proyecto[]
+
+  @@index([activo])
+  @@map("empresas")
+}
+
+model Departamento {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @unique @db.VarChar(150)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  proyectos Proyecto[]
+
+  @@index([activo])
+  @@map("departamentos")
+}
+
+model Mineral {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @unique @db.VarChar(150)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  proyectoMinerales ProyectoMineral[]
+
+  @@index([activo])
+  @@map("minerales")
+}
+
+model Etapa {
+  id        Int      @id @default(autoincrement())
+  nombre    String   @unique @db.VarChar(150)
+  activo    Boolean  @default(true)
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  @@index([activo])
+  @@map("etapas")
+}
+
+model Proyecto {
+  id                       Int      @id @default(autoincrement())
+  nombre                   String   @db.VarChar(200)
+  empresaId                Int      @map("empresa_id")
+  departamentoId           Int      @map("departamento_id")
+  superficieTotalPedimento Float    @map("superficie_total_pedimento")
+  areaUtilizada            Float    @map("area_utilizada")
+  poligonoPedimento        String   @map("poligono_pedimento")
+  activo                   Boolean  @default(true)
+  createdAt                DateTime @default(now()) @map("created_at") @db.Timestamptz(6)
+  updatedAt                DateTime @updatedAt @map("updated_at") @db.Timestamptz(6)
+
+  empresa      Empresa      @relation(fields: [empresaId], references: [id], onDelete: Restrict)
+  departamento Departamento @relation(fields: [departamentoId], references: [id], onDelete: Restrict)
+
+  proyectoMinerales ProyectoMineral[]
+
+  @@index([activo])
+  @@index([empresaId])
+  @@index([departamentoId])
+  @@map("proyectos")
+}
+
+// Tabla puente muchos-a-muchos: solo representa la asociación, sin valor
+// propio fuera de sus dos padres -> onDelete Cascade en ambos extremos
+// (ver convención de relaciones en el README).
+model ProyectoMineral {
+  proyectoId Int @map("proyecto_id")
+  mineralId  Int @map("mineral_id")
+
+  proyecto Proyecto @relation(fields: [proyectoId], references: [id], onDelete: Cascade)
+  mineral  Mineral  @relation(fields: [mineralId], references: [id], onDelete: Cascade)
+
+  @@id([proyectoId, mineralId])
+  @@index([mineralId])
+  @@map("proyecto_minerales")
+}

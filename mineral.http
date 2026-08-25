@@ -1,0 +1,72 @@
+### 1. Crear mineral (caso feliz) -> 201
+POST http://localhost:3000/api/v1/minerales
+Content-Type: application/json
+
+{
+  "nombre": "Litio"
+}
+
+### 2. Listar minerales (paginado, solo activos por default) -> 200
+GET http://localhost:3000/api/v1/minerales
+
+### 3. Obtener mineral por ID existente (reemplazá el 1 por un id real) -> 200
+GET http://localhost:3000/api/v1/minerales/1
+
+### 4. Obtener mineral con ID inválido -> 400
+GET http://localhost:3000/api/v1/minerales/abc
+
+### 5. Obtener mineral inexistente -> 404
+GET http://localhost:3000/api/v1/minerales/9999
+
+### 6. Reemplazar mineral existente (reemplazá el 1 por un id real) -> 200
+PUT http://localhost:3000/api/v1/minerales/1
+Content-Type: application/json
+
+{
+  "nombre": "Litio actualizado",
+  "activo": true
+}
+
+### 7. Actualizar parcialmente -> 200
+PATCH http://localhost:3000/api/v1/minerales/1
+Content-Type: application/json
+
+{
+  "nombre": "Litio"
+}
+
+### 8. Crear con nombre vacío -> 400
+POST http://localhost:3000/api/v1/minerales
+Content-Type: application/json
+
+{
+  "nombre": ""
+}
+
+### 9. Crear con nombre duplicado -> 409
+POST http://localhost:3000/api/v1/minerales
+Content-Type: application/json
+
+{
+  "nombre": "Litio"
+}
+
+### 10. Dar de baja (baja lógica, reemplazá el 1 por un id real) -> 200, activo:false
+DELETE http://localhost:3000/api/v1/minerales/1
+
+### 10b. Ya no aparece en el listado default -> 200
+GET http://localhost:3000/api/v1/minerales
+
+### 10c. Reactivar -> 200, activo:true
+PATCH http://localhost:3000/api/v1/minerales/1
+Content-Type: application/json
+
+{
+  "activo": true
+}
+
+### 11. Dar de baja dos veces -> segunda vez 409
+DELETE http://localhost:3000/api/v1/minerales/1
+
+### 11b.
+DELETE http://localhost:3000/api/v1/minerales/1

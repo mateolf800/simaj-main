@@ -1,0 +1,72 @@
+### 1. Crear etapa (caso feliz) -> 201
+POST http://localhost:3000/api/v1/etapas
+Content-Type: application/json
+
+{
+  "nombre": "Exploración"
+}
+
+### 2. Listar etapas (paginado, solo activas por default) -> 200
+GET http://localhost:3000/api/v1/etapas
+
+### 3. Obtener etapa por ID existente (reemplazá el 1 por un id real) -> 200
+GET http://localhost:3000/api/v1/etapas/1
+
+### 4. Obtener etapa con ID inválido -> 400
+GET http://localhost:3000/api/v1/etapas/abc
+
+### 5. Obtener etapa inexistente -> 404
+GET http://localhost:3000/api/v1/etapas/9999
+
+### 6. Reemplazar etapa existente (reemplazá el 1 por un id real) -> 200
+PUT http://localhost:3000/api/v1/etapas/1
+Content-Type: application/json
+
+{
+  "nombre": "Exploración actualizada",
+  "activo": true
+}
+
+### 7. Actualizar parcialmente -> 200
+PATCH http://localhost:3000/api/v1/etapas/1
+Content-Type: application/json
+
+{
+  "nombre": "Exploración"
+}
+
+### 8. Crear con nombre vacío -> 400
+POST http://localhost:3000/api/v1/etapas
+Content-Type: application/json
+
+{
+  "nombre": ""
+}
+
+### 9. Crear con nombre duplicado -> 409
+POST http://localhost:3000/api/v1/etapas
+Content-Type: application/json
+
+{
+  "nombre": "Exploración"
+}
+
+### 10. Dar de baja (baja lógica, reemplazá el 1 por un id real) -> 200, activo:false
+DELETE http://localhost:3000/api/v1/etapas/1
+
+### 10b. Ya no aparece en el listado default -> 200
+GET http://localhost:3000/api/v1/etapas
+
+### 10c. Reactivar -> 200, activo:true
+PATCH http://localhost:3000/api/v1/etapas/1
+Content-Type: application/json
+
+{
+  "activo": true
+}
+
+### 11. Dar de baja dos veces -> segunda vez 409
+DELETE http://localhost:3000/api/v1/etapas/1
+
+### 11b.
+DELETE http://localhost:3000/api/v1/etapas/1
